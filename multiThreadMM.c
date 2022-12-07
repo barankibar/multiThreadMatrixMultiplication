@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<time.h>
 #include<pthread.h>
+#include<time.h>
 
 #define MATRIX_SIZE 5
 
@@ -25,12 +26,22 @@ static void * multiplication(void *arg);
 
 //MAIN
 int main(int argc, char *argv[]){
-
+	clock_t begin = clock();
 	if(argc != 3) {
-		printf("Usage: %s <file1> <file> \n", argv[0]);
+		printf("Usage: %s <file1> <file2> \n", argv[0]);
 		return 1;
 	}
-	
+
+	/* 
+		Example of matrix file's schema:
+		-------------------------
+		a1  a2  a3  a4  a5
+		a6  a7  a8  a9  a10
+		a11 a12 a13 a14 a15
+		a16 a17 a18 a19 a20
+		a21 a22 a23 a24 a25
+		-------------------------
+	*/
 	//Assing numbers from file1 to first matrix row and column
 	FILE *fp = fopen(argv[1], "r");
 	if(fp == NULL)
@@ -87,7 +98,9 @@ int main(int argc, char *argv[]){
 		free(data[i]);
 	}
 	free(data);
-	
+
+	clock_t end = clock();
+	printf("The elapsed time for this all process: %f \n", (double)(end - begin) / CLOCKS_PER_SEC);
 	return 0;
 }
 
@@ -118,6 +131,9 @@ void printMatrix(int row, int col, short matrix[row][col]) {
 }
 
 static void * multiplication(void *arg) {
+	// For find execution time of a thread
+	clock_t begin = clock();
+
 	struct v *data = (struct v *)arg;
 	size_t l;
 	
@@ -136,5 +152,8 @@ static void * multiplication(void *arg) {
 		result[i][j] = sum;
 		sum = 0;
 	}
+	clock_t end = clock();
+	printf("The elapsed time for this thread : %f \n", (double)(end - begin) / CLOCKS_PER_SEC);
+
 	return 0;
 }
