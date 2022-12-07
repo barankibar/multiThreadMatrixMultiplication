@@ -19,16 +19,38 @@ short result[MATRIX_SIZE][MATRIX_SIZE];
 //Function Declerations
 void printMatrix(int row, int col, short matrix[row][col]);
 
-void randomMatrix (int row, int col, short arr[row][col]);
+void readMatrix (int row, int col, short arr[row][col], FILE *fp );
 
 static void * multiplication(void *arg);
 
 //MAIN
 int main(int argc, char *argv[]){
-	//Assing random numbers to matrix row and column
-	randomMatrix(MATRIX_SIZE, MATRIX_SIZE, matrix_a);
-	randomMatrix(MATRIX_SIZE, MATRIX_SIZE, matrix_b);
+
+	if(argc != 3) {
+		printf("Usage: %s <file1> <file> \n", argv[0]);
+		return 1;
+	}
 	
+	//Assing numbers from file1 to first matrix row and column
+	FILE *fp = fopen(argv[1], "r");
+	if(fp == NULL)
+	{
+		printf("Couldn't open file1 \n");
+		return 1;
+	}
+	readMatrix(MATRIX_SIZE, MATRIX_SIZE, matrix_a, fp);
+	fclose(fp);
+	
+	//Assing numbers from file2 to first matrix row and column
+	fp = fopen(argv[2], "r");
+	if(fp == NULL)
+	{
+		printf("Couldn't open file2 \n");
+		return 1;
+	}
+	readMatrix(MATRIX_SIZE, MATRIX_SIZE, matrix_b, fp);
+	fclose(fp);
+
 	printMatrix(MATRIX_SIZE, MATRIX_SIZE, matrix_a);
 	printMatrix(MATRIX_SIZE, MATRIX_SIZE, matrix_b);
 
@@ -70,13 +92,13 @@ int main(int argc, char *argv[]){
 }
 
 //Secondary Functions
-void randomMatrix (int row, int col, short arr[row][col]) {
+void readMatrix (int row, int col, short arr[row][col], FILE *fp) {
 	int i,j;
-	
-    for ( i = 0; i < col; ++i) {
-      	for (j = 0; j< row; ++j) {
-      		arr[i][j] = rand() % 100;
-	  	}
+
+	for(i = 0; i < MATRIX_SIZE; i++) {
+		for(j=0; j < MATRIX_SIZE; j++) {
+			fscanf(fp, "%hu", &arr[i][j]);
+		}
 	}
 }
 
